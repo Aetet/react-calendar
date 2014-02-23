@@ -7,8 +7,8 @@ var Title = React.createClass({
       return (
         <div>
           <span>+</span>
-          <span>Месяц</span>
-          <span>Год</span>
+          <span>{this.props.month}</span>
+          <span>{this.props.year}</span>
           <span>-</span>
         </div>
       );
