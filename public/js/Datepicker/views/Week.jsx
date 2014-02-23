@@ -1,17 +1,16 @@
 /**
 * @jsx React.DOM
 */
-var React = require('react');
+var React = require('react'),
+    Day = require('root/Datepicker/views/Day');
+    
 var Week = React.createClass({
   render: function () {
-    var self = this;
-    var days = this.props.weekData.map(function (day) {
-      return (<th>{day}</th>);
+    var dates = this.props.week.map(function (date) {
+      return (<Day date={date}/>);
     });
     return (
-      <thead>
-        {days}
-      </thead> 
+      <tr>{dates}</tr>      
     );
   }
 });
