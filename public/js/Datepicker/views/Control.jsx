@@ -3,6 +3,12 @@
 */
 var React = require('react');
 var Control = React.createClass({
+  propTypes: {
+    year:     React.PropTypes.number,
+    month:    React.PropTypes.number,
+    onChange: React.PropTypes.function
+  },
+
   handleMinus: function () {
     var month,
         year = this.props.year,
@@ -15,6 +21,7 @@ var Control = React.createClass({
     }
     this.props.onChange(month, year);
   },
+
   handlePlus: function () {
     var month,
         year = this.props.year,
@@ -27,6 +34,7 @@ var Control = React.createClass({
     }
     this.props.onChange(month, year);
   },
+
   render: function () {
     return (
       <div>

@@ -11,6 +11,26 @@ var DatepickerMapper = {
       monthData: monthData
     };
   },
+
+  generateCurrentAndNextMonth: function (year, month) {
+    var res = {};
+    var nextYear, nextMonth;
+    if (month + 1 > 12) {
+      nextMonth = 0;
+      nextYear = year + 1;
+    } else {
+      nextMonth = month + 1;
+      nextYear = year;
+    }
+
+    return {
+      currentMonth: month,
+      currentYear: year,
+      nextMonth: nextMonth,
+      nextYear: nextYear
+    };
+  },
+
   generateMonthData: function (year, month, firstDay) {
     var cellInfo = this.generateCellInfo(year, month, firstDay);
     var totalCells = cellInfo.before + cellInfo.days + cellInfo.after;
@@ -55,6 +75,13 @@ var DatepickerMapper = {
     }
     return data;
   },
+  /**
+   * Генерируем информацию о ячейках, которые были до, во время и после текущего месяца
+   * @param  {[type]} year     [description]
+   * @param  {[type]} month    [description]
+   * @param  {[type]} firstDay [description]
+   * @return {[type]}          [description]
+   */
   generateCellInfo: function (year, month, firstDay) {
     //Общее количество ячеек на развороте месяца
     //которое нужно добавить
