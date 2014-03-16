@@ -1,3 +1,17 @@
 .hidden {
   display: none;
 }
+
+/*Блок дня */
+.bDay_mSelectedFrom {
+  background-color: yellow;
+}
+.bDay_mSelectedTo {
+  background-color: red;
+}
+.bDay_mBetween {
+  background-color: green;
+}
+.bDay_mDisabled {
+  background-color: #666;
+}

@@ -1,6 +1,6 @@
 var MONDAY = 1;
 var DatepickerMapper = {
-  generateDatepickerData: function (year, month, opts) {
+  generateDatepickerData: function (year, month, options) {
     var monthData = this.generateMonthData(year, month, MONDAY);
     var weekData = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
     var monthString = 'Февраль';
@@ -31,50 +31,99 @@ var DatepickerMapper = {
     };
   },
 
-  generateMonthData: function (year, month, firstDay) {
+  generateMonthData: function (year, month, firstDay, viewParams) {
     var cellInfo = this.generateCellInfo(year, month, firstDay);
     var totalCells = cellInfo.before + cellInfo.days + cellInfo.after;
     var before = cellInfo.before;
     var after = cellInfo.after;
     var days = cellInfo.days;
     var prevMonth;
+    var dateObject;
     var data = [];
     var week = [];
 
-    for (var i = 0, r = 0; i < totalCells; i++) {
-      if (i < before) {
-        monthP = month - 1;
-        prevMonth = (monthP >= 0) ? monthP : 12 + monthP;
-        week.push({
-          month: prevMonth,
-          current: 'prev'
-        });
-      } else {
-        if (i >= days + before) {
-          monthN = month + 1;
-          prevMonth = (monthN <= 12) ? monthN : monthN - 12;
-          week.push({
-            month: month + 1,
-            current: 'next'
-          });
-        } else {
-          var date = (i - before + 1) + '.' +(month + 1 + '') + '.' + (year + '');
-          week.push({
-            day: i - before + 1,
-            month: month,
-            current: 'current'
-          });
+    viewParams = {
+      selectedDates: [{
+        from: '2014-03-17',
+        to: '2014-03-20'
+      },{
+        from: '2014-03-18',
+        to: '2014-03-22'
+      }],
+      disabledDates: [{
+        from: '2014-03-01',
+        to: '2014-03-15'
+      }, {
+        from: '2014-03-29',
+        to: '2014-04-03'
+      }]
+    };
 
+    for (var i = 0, weekDayCounter = 0; i < totalCells; i++) {
+      dateObject = {};
+      //Берем даты только за этот месяц, не считая те дни, который были в начале и конце месяца
+      if (i >= before && i < (days + before)) {
+        var date = i - before + 1;
+        dateObject = {
+          date: date,
+          month: month,
+          currentMonth: 'current',
+          year: year
+        };
+
+
+        if (viewParams) {
+          var tmpDate = new Date(Date.parse((month + 1) + '/' + date + '/' + year));
+          var viewObject = this.generateViewParamsObject(tmpDate, viewParams);
+          dateObject.isDisabled = viewObject.isDisabled;
+          dateObject.isSelectedTo = viewObject.isSelectedTo;
+          dateObject.isSelectedFrom = viewObject.isSelectedFrom;
+          dateObject.isBetween = viewObject.isBetween;
         }
+
       }
-      if (++r === 7) {
+      week.push(dateObject);
+      if (++weekDayCounter === 7) {
         data.push(week);
         week = [];
-        r = 0;
+        weekDayCounter = 0;
       }
     }
     return data;
   },
+
+  generateViewParamsObject: function (tmpDate, viewParams) {
+    var self = this;
+    var res = {};
+    var tmpTime = tmpDate.getTime();
+    viewParams.disabledDates.forEach(function (date) {
+      var disabledFrom = self.parseDateFromString(date.from).getTime();
+      var disabledTo = self.parseDateFromString(date.to).getTime();
+
+      res.isDisabled =  (tmpTime >= disabledFrom) && (tmpTime <= disabledTo);
+    });
+
+    viewParams.selectedDates.forEach(function (date) {
+      var selectedFrom = self.parseDateFromString(date.from).getTime();
+      var selectedTo;
+      if (date.to) {
+        selectedTo = self.parseDateFromString(date.to).getTime();
+      } else {
+        res.isSelectedTo = false;
+      }
+
+      if (!(res.isDisabled)) {
+        res.isSelectedFrom = res.isSelectedFrom || (tmpTime === selectedFrom);
+        res.isSelectedTo = res.isSelectedTo || (tmpTime === selectedTo);
+        res.isBetween = res.isBetween || ((tmpTime >= selectedFrom) && (tmpTime <= selectedTo));
+      }
+    });
+
+    console.log(res, tmpDate);
+
+    return res;
+  },
+
   /**
    * Генерируем информацию о ячейках, которые были до, во время и после текущего месяца
    * @param  {[type]} year     [description]
@@ -111,6 +160,12 @@ var DatepickerMapper = {
       days: daysInMonth
     };
   },
+
+  parseDateFromString: function (string) {
+    var stringForParse = string;
+    return new Date(stringForParse.replace(/(\d+)-(\d+)-(\d+)/, '$2/$3/$1'));
+  },
+
   isDate: function (obj) {
     return (
       ("[object Date]" === Object.prototype.toString.call(obj)) &&

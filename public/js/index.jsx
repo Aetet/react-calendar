@@ -9,25 +9,25 @@ var month = currentDate.getMonth();
 var year = currentDate.getFullYear();
 
 var Index = React.createClass({
-  getInitialState: function () {
-    return {
-      isShow: this.props.isShow || false
-    };
+  propTypes: {
+    currentMonth:          React.PropTypes.number,
+    selectedDates:         React.PropTypes.array,
+    disabledDates:         React.PropTypes.array,
+    isShowDatepickerPanel: React.PropTypes.boolean,
+    currentYear:           React.PropTypes.number,
+    nextMonth:             React.PropTypes.number,
+    nextYear:              React.PropTypes.number
   },
 
-  handleFocus: function () {
-    this.setState({isShow: true});
-  },
-
-  handleMonthChange: function () {
-
-  },
+  displayName: 'Index',
 
   render: function () {
     var trueS = true;
     return (
       <div>
         <Datepicker currentMonth={this.props.currentMonth}
+                    selectedDates={this.props.selectedDates}
+                    disabledDates={this.props.disabledDates}
                     isShowDatepickerPanel={trueS}
                     currentYear={this.props.currentYear}
                     nextMonth={this.props.nextMonth}

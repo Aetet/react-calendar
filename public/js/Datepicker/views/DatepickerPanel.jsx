@@ -23,7 +23,8 @@ var DatepickerPanel = React.createClass({
   },
 
   render: function () {
-    var viewParams = DatepickerViewHelper.getViewParams(this.props);
+    var viewParams =
+      DatepickerViewHelper.getShowClass(this.props.isShow);
     return (
       <div>
         <input type="text" onFocus={this.handleFocus} name="calendar" />
